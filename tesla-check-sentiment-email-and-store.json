@@ -1,0 +1,170 @@
+[
+    {
+        "id": "c9111b2c.640dd8",
+        "type": "twitter in",
+        "z": "c3d47adf.dd8968",
+        "twitter": "",
+        "tags": "#Tesla",
+        "user": "false",
+        "name": "",
+        "topic": "tweets",
+        "inputs": 0,
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "bbdb7070.c9bae",
+                "c6bcae93.1318b"
+            ]
+        ]
+    },
+    {
+        "id": "be5035b3.1a9168",
+        "type": "e-mail",
+        "z": "c3d47adf.dd8968",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "mapd725@mailinator.com",
+        "dname": "",
+        "x": 1070,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "bbdb7070.c9bae",
+        "type": "sentiment",
+        "z": "c3d47adf.dd8968",
+        "name": "",
+        "property": "payload",
+        "x": 180,
+        "y": 240,
+        "wires": [
+            [
+                "a26ed1bb.3a181",
+                "cb0101ba.494b7"
+            ]
+        ]
+    },
+    {
+        "id": "a26ed1bb.3a181",
+        "type": "function",
+        "z": "c3d47adf.dd8968",
+        "name": "filter payload and score",
+        "func": "var output = { }\n\noutput.payload = msg.payload\noutput.sentiment = msg.sentiment.score\n\nreturn output",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 190,
+        "y": 340,
+        "wires": [
+            [
+                "922cc2e7.6232",
+                "9cce5d5.2153aa",
+                "ca2781d6.9b05a"
+            ]
+        ]
+    },
+    {
+        "id": "922cc2e7.6232",
+        "type": "debug",
+        "z": "c3d47adf.dd8968",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 450,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "cb0101ba.494b7",
+        "type": "debug",
+        "z": "c3d47adf.dd8968",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 450,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "c6bcae93.1318b",
+        "type": "debug",
+        "z": "c3d47adf.dd8968",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 450,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "9cce5d5.2153aa",
+        "type": "function",
+        "z": "c3d47adf.dd8968",
+        "name": "filter sentiment < -3",
+        "func": "if (msg.sentiment < -3) {\n    return msg\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 340,
+        "wires": [
+            [
+                "9e4d3e2e.46485"
+            ]
+        ]
+    },
+    {
+        "id": "69a0bbcc.195914",
+        "type": "debug",
+        "z": "c3d47adf.dd8968",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 1010,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "ca2781d6.9b05a",
+        "type": "cloudant out",
+        "z": "c3d47adf.dd8968",
+        "name": "",
+        "cloudant": "",
+        "database": "nodered",
+        "service": "mapd725-timbo-assignment1-cloudantNoSQLDB",
+        "payonly": false,
+        "operation": "insert",
+        "x": 455,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "9e4d3e2e.46485",
+        "type": "function",
+        "z": "c3d47adf.dd8968",
+        "name": "Email Formatter",
+        "func": "var email = {}\nemail.topic = \"Tesla Bad Tweets\"\nemail.payload = \"Scored \" +\n   msg.sentiment + \": \" + msg.payload\nreturn email;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 340,
+        "wires": [
+            [
+                "be5035b3.1a9168",
+                "69a0bbcc.195914"
+            ]
+        ]
+    }
+]
